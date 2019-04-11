@@ -24,6 +24,7 @@ public class CarEngine : MonoBehaviour
 
 	public bool isStop;
 	public event EventHandler carStop;
+	public event EventHandler carHorn;
 
 	// Start is called before the first frame update
 	void Start()
@@ -54,6 +55,7 @@ public class CarEngine : MonoBehaviour
 		Driver();
 		UpdateWheelPoses();
 		CheckWayPointDistance();
+		CheckWayToHorn();
 	}
 
 	void Stop() {
@@ -62,15 +64,7 @@ public class CarEngine : MonoBehaviour
 
 	void ApplySteer()
 	{
-
-		//Vector3 delta = nodes[currentNode].position - headOfCar.position;
-
-		//float newSteer = Mathf.Atan(delta.x / delta.z) * 180 / Mathf.PI;
-		//Debug.Log("=== steer angle: " + newSteer);
-
-
 		Vector3 relativeVector = headOfCar.InverseTransformPoint(nodes[currentNode].position);
-		//float newSteer = -relativeVector.x / relativeVector.magnitude * 45;
 		float newSteer = Mathf.Asin(relativeVector.x / relativeVector.magnitude) * 180 / Mathf.PI;
 		wheelFrontLeftW.steerAngle = newSteer;
 		WheelFrontRightW.steerAngle = newSteer;
@@ -121,12 +115,15 @@ public class CarEngine : MonoBehaviour
 			}
 		}
 
-		//if (Vector3.Distance(nodes[currentNode].position, transform.position) < 0.05f)
-		//{
-		//	Debug.Log("chang current node");
-		//	currentNode++;
-		//}
 	}
 
-	
+	void CheckWayToHorn()
+	{
+		if (currentNode == 4 || currentNode == 7 && carHorn != null)
+		{
+			carHorn.Invoke();
+		}
+	}
+
+
 }
